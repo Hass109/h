@@ -207,66 +207,74 @@ if (!isPS4) {
         outBox.innerHTML = "<span class='warn'>Only for PS4 with Firmware 7.00 to 13.00</span>";
     });
 } else {
-    // إصلاح ذكي: إذا كانت الصفحة الرئيسية غير محفوظة في الكاش أونلاين، يتم تحويلها فوراً لصفحات التثبيت الكاش الفرعية
-    if (window.applicationCache.status == window.applicationCache.UNCACHED || window.applicationCache.status == window.applicationCache.IDLE) {
+    // معالجة حالة الـ Application Cache أونلاين ومحلياً
+    var cacheStatus = window.applicationCache ? window.applicationCache.status : 0;
+    
+    if (cacheStatus == window.applicationCache.UNCACHED || cacheStatus == window.applicationCache.IDLE) {
         
-        // فحص إضافي: إذا كان الرابط يحتوي على كلمة كاش من التوجيه الداخلي لـ GamerHack لا يكرر التحويل لمنع الحلقات اللانهائية
+        // منع التكرار اللانهائي لعمليات التحويل الخارجية للـ PS4
         if (!window.location.href.includes('cache')) {
-        if (fwNum >= 7.00 && fwNum <= 8.52) {
-            window.location.replace("cache700.html");
-        } else if (fwNum >= 9.00 && fwNum <= 9.60) {
-            window.location.replace("cache900.html");
-        } else if (fwNum >= 10.00 && fwNum <= 11.02) {
-            window.location.replace("cachecss.html");
-        } else if (fwNum >= 11.50 && fwNum <= 13.00) {
-            window.location.replace("cacheslopkit.html");
-        } else {
-            document.addEventListener("DOMContentLoaded", () => {
+            if (fwNum >= 7.00 && fwNum <= 8.52) {
+                window.location.replace("cache700.html");
+            } else if (fwNum >= 9.00 && fwNum <= 9.60) {
+                window.location.replace("cache900.html");
+            } else if (fwNum >= 10.00 && fwNum <= 11.02) {
+                window.location.replace("cachecss.html");
+            } else if (fwNum >= 11.50 && fwNum <= 13.00) {
+                window.location.replace("cacheslopkit.html");
+            } else {
                 stateBox.innerHTML = "UNSUPPORTED FIRMWARE";
                 stateBox.className = "bad";
                 outBox.innerHTML = 'Firmware Version: <span style="color: red;">' + fwVersion + '</span> is not supported.';
-            });
+            }
+        } else {
+            executePayload();
         }
     } else {
-        if (fwNum >= 7.00 && fwNum <= 8.52) {
-            var script = document.createElement('script');
-            script.type = 'module';
-            script.src = "700/alert.js";
-            script.onerror = onScriptError;
-            document.head.appendChild(script);
-        }
-        else if (fwNum >= 9.00 && fwNum <= 9.60) {
-            var script = document.createElement('script');
-            script.type = 'module';
-            script.src = "900/alert.js";
-            script.onerror = onScriptError;
-            document.head.appendChild(script);
-        }
-        else if (fwNum >= 10.00 && fwNum <= 11.02) {
-            var script = document.createElement('script');
-            script.src = "css/main.js";
-            script.onerror = onScriptError;
-            script.onload = function () {
-                setTimeout(function () {
-                    doJb();
-                }, 500);
-            };
-            document.head.appendChild(script);
-        }
-        else if (fwNum >= 11.50 && fwNum <= 12.02) {
-            var script = document.createElement('script');
-            script.type = 'module';
-            script.src = "slopkit/chain_lapse.js";
-            script.onerror = onScriptError;
-            document.head.appendChild(script);
-        }
-        else if (fwNum >= 12.50 && fwNum <= 13.00) {
-            var script = document.createElement('script');
-            script.type = 'module';
-            script.src = "slopkit/chain_poops.js";
-            script.onerror = onScriptError;
-            document.head.appendChild(script);
-        }
+        executePayload();
+    }
+} //
+
+// دالة منفصلة ومحمية لاستدعاء الثغرة والملفات بعد نجاح التحقق والتثبيت الكاش
+function executePayload() {
+    if (fwNum >= 7.00 && fwNum <= 8.52) {
+        var script = document.createElement('script');
+        script.type = 'module';
+        script.src = "700/alert.js";
+        script.onerror = onScriptError;
+        document.head.appendChild(script);
+    }
+    else if (fwNum >= 9.00 && fwNum <= 9.60) {
+        var script = document.createElement('script');
+        script.type = 'module';
+        script.src = "900/alert.js";
+        script.onerror = onScriptError;
+        document.head.appendChild(script);
+    }
+    else if (fwNum >= 10.00 && fwNum <= 11.02) {
+        var script = document.createElement('script');
+        script.src = "css/main.js";
+        script.onerror = onScriptError;
+        script.onload = function () {
+            setTimeout(function () {
+                doJb();
+            }, 500);
+        };
+        document.head.appendChild(script);
+    }
+    else if (fwNum >= 11.50 && fwNum <= 12.02) {
+        var script = document.createElement('script');
+        script.type = 'module';
+        script.src = "slopkit/chain_lapse.js";
+        script.onerror = onScriptError;
+        document.head.appendChild(script);
+    }
+    else if (fwNum >= 12.50 && fwNum <= 13.00) {
+        var script = document.createElement('script');
+        script.type = 'module';
+        script.src = "slopkit/chain_poops.js";
+        script.onerror = onScriptError;
+        document.head.appendChild(script);
     }
 }
 </script>
