@@ -207,8 +207,11 @@ if (!isPS4) {
         outBox.innerHTML = "<span class='warn'>Only for PS4 with Firmware 7.00 to 13.00</span>";
     });
 } else {
-    // التوجيه المباشر والآمن لملفات الكاش الفرعية كما في الكود الأول تماماً
-    if (window.applicationCache.status == '0') {
+    // إصلاح ذكي: إذا كانت الصفحة الرئيسية غير محفوظة في الكاش أونلاين، يتم تحويلها فوراً لصفحات التثبيت الكاش الفرعية
+    if (window.applicationCache.status == window.applicationCache.UNCACHED || window.applicationCache.status == window.applicationCache.IDLE) {
+        
+        // فحص إضافي: إذا كان الرابط يحتوي على كلمة كاش من التوجيه الداخلي لـ GamerHack لا يكرر التحويل لمنع الحلقات اللانهائية
+        if (!window.location.href.includes('cache')) {
         if (fwNum >= 7.00 && fwNum <= 8.52) {
             window.location.replace("cache700.html");
         } else if (fwNum >= 9.00 && fwNum <= 9.60) {
