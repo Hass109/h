@@ -188,7 +188,7 @@
 var uaFull = navigator.userAgent;
 var match = uaFull.match(/PlayStation 4[ /]([\d.]+)/i);
 var isPS4 = match !== null;
-var fwVersion = isPS4 ? match : "Unknown";
+var fwVersion = isPS4 ? match[1] : "Unknown"; 
 var fwNum = parseFloat(fwVersion);
 
 var stateBox = document.getElementById("state");
