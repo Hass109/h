@@ -1,8 +1,9 @@
 CACHE MANIFEST 
 
 CACHE:
-../img.jpg
-../style.css
+preview.png
+logo_raw.png
+style.css
 goldhen_2.4b18.10.bin
 index.html
 slopkit\chain_lapse.js
