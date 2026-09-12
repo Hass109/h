@@ -211,33 +211,44 @@ if (!isPS4) {
         outBox.innerHTML = "<span class='warn'>Only for PS4 with Firmware 7.00 to 13.00</span>";
     });
 } else {
-    // معالجة حالة الـ Application Cache أونلاين ومحلياً
-    var cacheStatus = window.applicationCache ? window.applicationCache.status : 0;
-    
-    if (cacheStatus == window.applicationCache.UNCACHED || cacheStatus == window.applicationCache.IDLE) {
+    // 1. التحقق مما إذا كان الجهاز متصلاً بالإنترنت (أوفلاين)
+    if (!navigator.onLine) {
+        // نحن في وضع الأوفلاين: يمنع التحويل، وننفذ الثغرة فوراً من الملفات المخبأة
+        executePayload();
+    } else {
+        // 2. نحن في وضع الأونلاين: نقرأ حالة الكاش
+        var cacheStatus = window.applicationCache ? window.applicationCache.status : 0;
         
-        // منع التكرار اللانهائي لعمليات التحويل الخارجية للـ PS4
+        // التحقق إذا كنا في الصفحة الرئيسية (الرابط لا يحتوي على كلمة cache)
         if (!window.location.href.includes('cache')) {
-            if (fwNum >= 7.00 && fwNum <= 8.52) {
-                window.location.replace("cache700.html");
-            } else if (fwNum >= 9.00 && fwNum <= 9.60) {
-                window.location.replace("cache900.html");
-            } else if (fwNum >= 10.00 && fwNum <= 11.02) {
-                window.location.replace("cachecss.html");
-            } else if (fwNum >= 11.50 && fwNum <= 13.00) {
-                window.location.replace("cacheslopkit.html");
-            } else {
-                stateBox.innerHTML = "UNSUPPORTED FIRMWARE";
-                stateBox.className = "bad";
-                outBox.innerHTML = 'Firmware Version: <span style="color: red;">' + fwVersion + '</span> is not supported.';
+            
+            // إذا كان الكاش غير موجود أبداً (0)، قم بتحويله لصفحة حفظ الكاش المخصصة لإصداره
+            if (cacheStatus === 0) {
+                if (fwNum >= 7.00 && fwNum <= 8.52) {
+                    window.location.replace("cache700.html");
+                } else if (fwNum >= 9.00 && fwNum <= 9.60) {
+                    window.location.replace("cache900.html");
+                } else if (fwNum >= 10.00 && fwNum <= 11.02) {
+                    window.location.replace("cachecss.html");
+                } else if (fwNum >= 11.50 && fwNum <= 13.00) {
+                    window.location.replace("cacheslopkit.html");
+                } else {
+                    stateBox.innerHTML = "UNSUPPORTED FIRMWARE";
+                    stateBox.className = "bad";
+                    outBox.innerHTML = 'Firmware Version: <span style="color: red;">' + fwVersion + '</span> is not supported.';
+                }
+            } else if (cacheStatus === 1) {
+                // (1) تعني IDLE (الكاش موجود ومُحدث بالكامل مسبقاً)، نفذ الثغرة مباشرة
+                executePayload();
             }
+            // إذا كانت الحالة (2 أو 3) تعني أنه جاري تحميل الكاش الآن، ننتظر ولا ننفذ الثغرة حتى لا نتعارض مع التحميل
+            
         } else {
+            // نحن الآن داخل صفحة من صفحات الكاش نفسها (مثل cache900.html)
             executePayload();
         }
-    } else {
-        executePayload();
     }
-} //
+}
 
 // دالة منفصلة ومحمية لاستدعاء الثغرة والملفات بعد نجاح التحقق والتثبيت الكاش
 function executePayload() {
@@ -261,7 +272,7 @@ function executePayload() {
         script.onerror = onScriptError;
         script.onload = function () {
             setTimeout(function () {
-                doJb();
+                if(typeof doJb === "function") doJb();
             }, 500);
         };
         document.head.appendChild(script);
