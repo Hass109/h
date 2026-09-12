@@ -136,38 +136,40 @@
 
   /* لوحة إخراج الأكواد المصغرة والموسطة */
   #out { 
-    width: 80%; 
+    width: 75%; 
     max-width: 650px;
-    min-height: 150px;
-    max-height: 45vh;
+    height: 110px !important;     /* الارتفاع المطلوب */
+    min-height: 110px !important; /* يمنع تقلص المربع */
+    max-height: 110px !important; /* يمنع تمدد المربع لأسفل نهائياً */
+    flex: none !important;
     white-space: pre-wrap; 
     font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 13px; 
-    line-height: 1.5; 
+    font-size: 11px; 
+    line-height: 1.4; 
     background: rgba(10, 14, 23, 0.45); 
     border: 1px solid rgba(255, 255, 255, 0.15); 
-    border-radius: 10px;
-    padding: 15px 20px; 
-    overflow-y: scroll;
+    border-radius: 8px;
+    padding: 10px 15px; 
+    overflow-y: auto !important;
     overflow-x: hidden;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
-    margin-top: 15px; 
-    margin-bottom: 20px; 
+    margin-top: 4px; 
+    margin-bottom: 0px; 
     text-align: center;
     box-sizing: border-box;
   }
   
   /* تخصيص مظهر شريط التمرير */
   #out::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
   }
   #out::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    border-radius: 3px;
   }
   #out::-webkit-scrollbar-thumb {
     background: #ffd740; 
-    border-radius: 4px;
+    border-radius: 3px;
   }
 
   /* ألوان الحالات المتوهجة للأكواد */
